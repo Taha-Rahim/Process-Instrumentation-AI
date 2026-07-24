@@ -8,6 +8,7 @@ This project simulates an industrial thermal process (e.g., a chemical reactor) 
 * **Machine Learning (Isolation Forest):** Replaced hard-coded, static alarm thresholds with an unsupervised AI model. The AI was trained on a healthy baseline to dynamically detect multi-dimensional anomalies in the data stream.
 * **Safety Interlocks & Debouncing:** Engineered a fail-safe logic controller that requires consecutive AI flags to trigger an action, preventing false trips from random sensor noise.
 * **HMI Dashboard Design:** Built a live, animated Human-Machine Interface using Python, featuring dynamic status indicators, active state coloring, and automated emergency shutdown visualization.
+* **Closed-Loop PI Control & Supervisor Logic:** Implemented a software-based Proportional-Integral controller to dynamically modulate heater power in response to mechanical drift, paired with a saturated interlock cascade for fail-safe emergency shutdowns.
 
 ### How It Works
 1. **The Nominal State:** The system runs at a setpoint of 180°C. 
