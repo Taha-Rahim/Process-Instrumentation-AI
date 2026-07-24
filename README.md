@@ -11,11 +11,12 @@ This project simulates an industrial thermal process (e.g., a chemical reactor) 
 * **Closed-Loop PI Control & Supervisor Logic:** Implemented a software-based Proportional-Integral controller to dynamically modulate heater power in response to mechanical drift, paired with a saturated interlock cascade for fail-safe emergency shutdowns.
 
 ### How It Works
-1. **The Nominal State:** The system runs at a setpoint of 180°C. 
-2. **The Failure:** At t = 60s, a mechanical failure is introduced. 
-3. **The Detection:** The Isolation Forest detects the data profile shifting away from the trained baseline and begins throwing flags.
-4. **The Action:** Once 5 consecutive faults are recorded, the safety interlock overrides the system, cutting power and forcing an emergency cooling sequence to protect the simulated equipment. 
-
+1. **The Nominal State:** The system runs at a setpoint of 180°C, perfectly balancing heater output with natural heat loss.
+2. **The Failure:** At t = 60s, a mechanical failure (cooling valve leak) is introduced, causing temperatures to rise.
+3. **The Detection:** The AI (Isolation Forest) detects the data profile shifting away from the trained baseline.
+4. **The Mitigation (PI Control):** After 5 consecutive AI fault flags, control is handed to a Proportional-Integral (PI) loop, which dynamically throttles down the heater power to fight the rising temperature.
+5. **The Escalation:** If the heater drops to 0% power (actuator saturation) and the temperature still breaches 192°C, a supervisor logic interlock forces a critical emergency shutdown to protect the facility.
+6. 
 ### Technologies Used
 * Python (Simulation & Control Logic)
 * Scikit-Learn (Machine Learning / Isolation Forest)
