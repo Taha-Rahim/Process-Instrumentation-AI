@@ -19,7 +19,8 @@ This project simulates an industrial thermal process (e.g., a chemical reactor) 
 5.  **The Escalation (Redundant Override):** When the supervisor logic detects that the PI controller is struggling (heater output drops below 20%) or the temperature hits the critical 186°C limit, it instantly engages the backup cooling pump, successfully wrestling the process back into the safe operating band.
 
 ## Simulation Results
-*(Insert your successful graph image here: `![Phase 3 Simulation](image_e3bc7e.jpg)`)*
+<img width="1286" height="641" alt="Screenshot 2026-07-25 150718" src="https://github.com/user-attachments/assets/2577e808-4d7a-4e21-9cba-0b8179f34d39" />
+
 
 ## Technologies Used
 *   Python (Simulation & Control Logic)
