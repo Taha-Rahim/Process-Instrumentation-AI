@@ -1,38 +1,25 @@
-# ⚙️ AI-Driven Process Instrumentation & Fault-Tolerant Control HMI
+# AI-Supervised Active 3D Closed-Loop Control System
 
-## Project Overview
+An intelligent process control and safety interlock simulation designed to monitor and protect a dynamic reactor system against thermal and flow-based anomalies.
 
-This project simulates an industrial thermal process (e.g., a chemical reactor) and implements a modern AI-driven control system. It bridges traditional Electrical Engineering control logic with Machine Learning to monitor interconnected physical variables, identify mechanical degradation, and seamlessly trigger redundant hardware systems before a catastrophic failure occurs.
+## System Architecture & Engineering Logic
 
-## Core Engineering Concepts Demonstrated
+In industrial and electrical engineering, combining Machine Learning with automated control loops requires robust fail-safe mechanisms to handle sensor noise and prevent catastrophic failures. This project implements a three-tier defense architecture:
 
-* **Multi-Variable Process Simulation:** Engineered a physics engine that generates synthetic Process Variables (Temperature, Fluid Flow, and Pressure) with real-world sensor noise and simulated interconnected mechanical drift (e.g., a blockage causing flow drops, pressure spikes, and subsequent thermal runaway).
-* **Multi-Dimensional Machine Learning (Isolation Forest):** Replaced hard-coded, static alarm thresholds with an unsupervised AI model evaluating a 3D data matrix in real-time. The AI was trained on a healthy baseline to dynamically detect complex anomalies in the data stream.
-* **Safety Interlocks & Debouncing:** Engineered a fail-safe logic controller that requires consecutive AI flags to trigger an action, preventing false trips from random sensor noise.
-* **Closed-Loop PI Control:** Implemented a software-based Proportional-Integral (PI) controller to dynamically modulate primary heater power in response to thermal drift.
-* **Fault-Tolerant Redundant Logic:** Developed a supervisor interlock that monitors actuator saturation. If the primary heater is heavily throttled (<20%) or a critical temperature threshold is breached (>186°C), a secondary redundant cooling pump is instantly engaged.
-* **HMI Dashboard Design:** Built a live, animated Human-Machine Interface using Python, featuring dynamic status indicators, multi-axis graphing, and real-time visualization of the control loop overrides.
+### 1. The ML Anomaly Detector
+* **Model:** Isolation Forest / ML classifier evaluating real-time multivariate states (Process Temperature, Flow Rate, Pressure).
+* **Function:** Continuously inspects the process trajectory for subtle operational drift or sudden faults.
 
-## Project Progression & Architecture
+### 2. The 3-Frame Debouncer
+* **The Problem:** Raw sensor noise and transient spikes can trigger false-positive AI flags, causing erratic system panic.
+* **The Solution:** A sequential counter requirement. The system demands **3 consecutive anomaly flags** before acknowledging a valid fault, successfully filtering out transient noise while maintaining a rapid response window (triggering within 3 seconds of a true fault).
 
-### ✅ Phase 1: Baseline Anomaly Detection & Control
-Established the core control loop. Successfully implemented active PI control and fault-tolerant redundant supervisor logic based on single-variable (Temperature) anomaly detection.
+### 3. The Safety Latch (Latching Relay Interlock)
+* **The Problem:** Once an automated emergency shutdown cuts the heater and activates backup cooling, the process temperature eventually drops back toward the setpoint. A naive system would experience a false negative and blindly restart the heater, leading to dangerous limit-cycling.
+* **The Solution:** Implemented a software-based **latching safety relay**. Once tripped, the emergency shutdown state *locks permanently*, requiring explicit manual intervention/reset regardless of temporary symptom improvement.
 
-### ✅ Phase 2: Multi-Variable System Expansion (Passive Monitoring)
-Real-world systems are interconnected. In this phase, the system was expanded to process multiple data streams simultaneously.
-* **The Physics:** Introduced Pressure and Fluid Flow Rate into the simulation, writing logic where variables directly affect one another.
-* **The Detection:** Upgraded the AI to evaluate a 3D matrix. At `t = 60s`, a mechanical degradation fault is introduced. The unsupervised AI successfully recognizes the abnormal correlation between dropping flow and spiking pressure, flagging the fault instantly—long before the temperature crosses critical thresholds.
-
-### 🔄 Phase 3: Active 3D Closed-Loop Control (In Progress)
-Wiring the multi-dimensional AI anomaly output (Phase 2) directly into the supervisor override logic (Phase 1) to automatically cut heater power and engage backup systems the moment a flow/pressure deviation is detected.
-
-## Simulation Results
-
-<img width="850" height="717" alt="Screenshot 2026-07-25 153312" src="https://github.com/user-attachments/assets/48de21c4-0f23-4e00-b2a1-a30351938024" />
-
-
-## Technologies Used
-
-* **Python** (Simulation & Control Logic)
-* **Scikit-Learn** (Machine Learning / Isolation Forest)
-* **Matplotlib & ipywidgets** (Live HMI Visualization)
+## Live HMI Visualization
+The system features a custom real-time HMI built with Matplotlib and IPython widgets (`ipywidgets`), rendering smooth, flicker-free updates across three synchronized monitoring channels:
+1. **Process Temperature & Safety Interlock:** Tracks live temperature against setpoints ($180^\circ\text{C}$) and critical limits ($186^\circ\text{C}$), dynamically shading active emergency states in red.
+2. **Process Hydraulics:** Monitors live Flow ($\text{L/min}$) and Pressure ($\text{PSI}$).
+3. **Control Action:** Visualizes PI controller output and emergency power cuts to the heater.
